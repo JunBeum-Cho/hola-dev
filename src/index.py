@@ -145,7 +145,7 @@ def get_localtunnel_address():
 
 
 def browser_automation():
-    if not os.environ.get('JSONBIN_ENDPOINT', None) or  not os.environ.get('JSONBIN_ENDPOINT', None):
+    if not os.environ.get('JSONBIN_ENDPOINT', None):
         print('.env 파일을 확인해주세요.')
         return
     
