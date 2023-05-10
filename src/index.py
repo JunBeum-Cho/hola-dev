@@ -50,7 +50,6 @@ def main():
         print(chalk.green.bold("env 로드 성공"))
     except:
         print(chalk.red.bold("env 로드 실패"))
-        return
 
     if platform.system() != 'Darwin':
         print('해당 CLI는 MAC에서만 작동합니다.')
