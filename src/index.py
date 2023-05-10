@@ -120,9 +120,14 @@ def set_environment():
     if 'Python 버전 설정' in environment_answer:
         if os.system('which pyenv') != 0:
             os.system('brew install pyenv')
-        os.system('pyenv ')
+        python_version = inquirer.text(message="사용하실 Python 버전:", default="3.9.10").execute()
+        os.system(f'pyenv install {python_version}')
+        os.symlink(f'pyenv global {python_version}')
 
     if 'Java 버전 설정' in environment_answer:
+        java_version = inquirer.text(message="사용하실 Java 버전:", default="13").execute()
+        os.system('brew tap adoptopenjdk/openjdk')
+        os.system(f'brew install --cask adoptopenjdk{java_version}')
         os.system('brew install gradle')
 
     if 'Git 계정 설정' in environment_answer:
