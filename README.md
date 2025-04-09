@@ -1,3 +1,2 @@
 git clone https://github.com/JunBeum-Cho/hola-dev.git
-
-hola-dev/setup.sh
+cd hola-dev && chmod +x setup.sh && ./setup.sh
