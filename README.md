@@ -18,6 +18,9 @@ else
     brew update
 fi
 
+# Install Homebrew Cask
+brew install mas
+
 # Install Chrome
 echo "Installing Chrome..."
 brew install --cask google-chrome
@@ -28,7 +31,7 @@ brew install --cask visual-studio-code
 
 # Install KakaoTalk
 echo "Installing KakaoTalk..."
-brew install --cask kakaotalk
+mas install 869223134
 
 # Install fnm (Fast Node Manager)
 echo "Installing fnm..."
