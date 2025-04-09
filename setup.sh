@@ -55,9 +55,6 @@ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
 echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
 echo 'eval "$(pyenv init -)"' >> ~/.zshrc
 
-# Install Python dependencies
-brew install openssl readline sqlite3 xz zlib tcl-tk
-
 # Install Python 3.10.12 using pyenv
 echo "Installing Python 3.10.12..."
 pyenv install 3.10.12
