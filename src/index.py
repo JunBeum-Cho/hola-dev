@@ -88,7 +88,7 @@ def install_dev_packages():
     ).execute()
 
     for item in dev_packages_answer:
-        installation_command = COMMON_PACKAGES[item]
+        installation_command = DEV_PACKAGES[item]
         os.system(installation_command)
 
 
