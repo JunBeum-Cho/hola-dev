@@ -1,3 +1,3 @@
-git clone git@github.com:JunBeum-Cho/hola-dev.git
+git clone https://github.com/JunBeum-Cho/hola-dev.git
 
 hola-dev/setup.sh
