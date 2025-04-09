@@ -105,7 +105,7 @@ def set_environment():
         os.system(f"fnm install {node_version}")
         os.system(f"fnm use {node_version}")
         os.system('echo \'eval "$(fnm env --use-on-cd)"\' >> ~/.zshrc')
-        os.system('source ~/.zshrc || true')
+        os.system('source ~/.zshrc')
         
     if 'Python 버전 설정' in environment_answer:
         if os.system('which pyenv') != 0:
@@ -117,7 +117,7 @@ def set_environment():
         os.system('echo \'export PATH="$PYENV_ROOT/bin:$PATH"\' >> ~/.zshrc')
         os.system('echo \'eval "$(pyenv init --path)"\' >> ~/.zshrc')
         os.system('echo \'eval "$(pyenv init -)"\' >> ~/.zshrc')
-        os.system('source ~/.zshrc || true')
+        os.system('source ~/.zshrc')
 
     if 'Java 버전 설정' in environment_answer:
         java_version = inquirer.text(message="사용하실 Java 버전:", default="13").execute()
