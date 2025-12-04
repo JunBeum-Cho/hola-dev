@@ -87,11 +87,12 @@ async function setupHighPerformanceMode() {
     {
       type: 'checkbox',
       name: 'selectedAgents',
-      message: '설정을 적용할 에이전트를 선택하세요 (스페이스바로 선택, 엔터로 완료)',
+      message: '설정을 적용할 에이전트를 선택하세요 (스페이스바로 선택 / 엔터로 완료)',
+      instructions: false,
       choices: [
-        { name: 'Claude', value: 'claude', checked: true },
-        { name: 'Codex (GPT)', value: 'codex', checked: true },
-        { name: 'Gemini', value: 'gemini', checked: true }
+        { name: 'Claude', value: 'claude', checked: false },
+        { name: 'Codex (GPT)', value: 'codex', checked: false },
+        { name: 'Gemini', value: 'gemini', checked: false }
       ]
     }
   ]);
@@ -142,8 +143,7 @@ const choices = [
     name: action.name,
     value: action.key
   })),
-  new inquirer.Separator(),
-  { name: '⚙️  최고성능 활성화', value: 'setup_high_performance' }
+  { name: '최고성능 활성화', value: 'setup_high_performance' }
 ];
 
 
@@ -171,10 +171,11 @@ async function main() {
           type: 'checkbox',
           name: 'selectedAgents',
           message: '설정을 적용할 에이전트를 선택하세요 (스페이스바로 선택, 엔터로 완료)',
+          instructions: false,
           choices: [
-            { name: 'Claude', value: 'claude', checked: true },
-            { name: 'Codex (GPT)', value: 'codex', checked: true },
-            { name: 'Gemini', value: 'gemini', checked: true }
+            { name: 'Claude', value: 'claude', checked: false },
+            { name: 'Codex (GPT)', value: 'codex', checked: false },
+            { name: 'Gemini', value: 'gemini', checked: false }
           ]
         }
       ]);
@@ -182,14 +183,14 @@ async function main() {
       if (selectedAgents.length > 0) {
         console.log(chalk.cyan('\n📁 설정 파일을 복사합니다...\n'));
         setupAgentConfigs(selectedAgents);
-        console.log(chalk.green.bold('\n✅ 최고성능모드가 활성화되었습니다!\n'));
+        console.log(chalk.green.bold('최고성능모드가 활성화되었습니다!\n'));
       } else {
-        console.log(chalk.yellow.bold('\n⚠️  선택된 에이전트가 없습니다.\n'));
+        console.log(chalk.yellow.bold('선택된 에이전트가 없습니다.\n'));
       }
       
       config = { initialized: true, highPerformanceMode: true, selectedAgents };
     } else {
-      console.log(chalk.yellow.bold('\n⚠️  최고성능모드가 비활성화되었습니다.\n'));
+      console.log(chalk.yellow.bold('최고성능모드가 비활성화되었습니다.\n'));
       config = { initialized: true, highPerformanceMode: false, selectedAgents: [] };
     }
     
