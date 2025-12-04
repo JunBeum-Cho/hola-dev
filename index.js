@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const inquirer = require('inquirer');
+const { select, checkbox, confirm } = require('@inquirer/prompts');
 const { spawn, execSync } = require('child_process');
 const commandExists = require('command-exists');
 const chalk = require('chalk');
@@ -82,25 +82,23 @@ function setupAgentConfigs(selectedAgents) {
   }
 }
 
+const agentChoices = [
+  { name: 'Claude', value: 'claude' },
+  { name: 'Codex (GPT)', value: 'codex' },
+  { name: 'Gemini', value: 'gemini' }
+];
+
 async function setupHighPerformanceMode() {
-  const { selectedAgents } = await inquirer.prompt([
-    {
-      type: 'checkbox',
-      name: 'selectedAgents',
-      message: '설정을 적용할 에이전트를 선택하세요 (스페이스바로 선택 / 엔터로 완료)',
-      instructions: false,
-      choices: [
-        { name: 'Claude', value: 'claude', checked: false },
-        { name: 'Codex (GPT)', value: 'codex', checked: false },
-        { name: 'Gemini', value: 'gemini', checked: false }
-      ]
-    }
-  ]);
+  const selectedAgents = await checkbox({
+    message: '설정을 적용할 에이전트를 선택하세요 (스페이스바로 선택 / 엔터로 완료)',
+    instructions: false,
+    choices: agentChoices
+  });
   
   if (selectedAgents.length > 0) {
     console.log(chalk.cyan('\n📁 설정 파일을 복사합니다...\n'));
     setupAgentConfigs(selectedAgents);
-    console.log(chalk.green.bold('\n✅ 최고성능모드가 활성화되었습니다!\n'));
+    console.log(chalk.green.bold('최고성능모드가 활성화되었습니다!\n'));
     
     // 설정 업데이트
     let config = loadConfig() || {};
@@ -109,7 +107,7 @@ async function setupHighPerformanceMode() {
     config.selectedAgents = selectedAgents;
     saveConfig(config);
   } else {
-    console.log(chalk.yellow.bold('\n⚠️  선택된 에이전트가 없습니다.\n'));
+    console.log(chalk.yellow.bold('선택된 에이전트가 없습니다.\n'));
   }
 }
 
@@ -138,7 +136,7 @@ const actions = [
   }
 ];
 
-const choices = [
+const menuChoices = [
   ...actions.map(action => ({
     name: action.name,
     value: action.key
@@ -153,35 +151,21 @@ async function main() {
   
   // 최초 실행 시 최고성능모드 물어보기
   if (!config || config.initialized !== true) {
-    console.log(chalk.cyan.bold('\n🚀 hola-dev에 오신 것을 환영합니다!\n'));
-    
-    const { enableHighPerformance } = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'enableHighPerformance',
-        message: '"최고성능모드"를 활성화 하시겠습니까?',
-        default: true
-      }
-    ]);
+    const enableHighPerformance = await confirm({
+      message: '"최고성능모드"를 활성화 하시겠습니까?',
+      default: true
+    });
     
     if (enableHighPerformance) {
       // 다중 선택으로 agent 선택
-      const { selectedAgents } = await inquirer.prompt([
-        {
-          type: 'checkbox',
-          name: 'selectedAgents',
-          message: '설정을 적용할 에이전트를 선택하세요 (스페이스바로 선택, 엔터로 완료)',
-          instructions: false,
-          choices: [
-            { name: 'Claude', value: 'claude', checked: false },
-            { name: 'Codex (GPT)', value: 'codex', checked: false },
-            { name: 'Gemini', value: 'gemini', checked: false }
-          ]
-        }
-      ]);
+      const selectedAgents = await checkbox({
+        message: '설정을 적용할 에이전트를 선택하세요 (스페이스바로 선택 / 엔터로 완료)',
+        instructions: false,
+        choices: agentChoices
+      });
       
       if (selectedAgents.length > 0) {
-        console.log(chalk.cyan('\n📁 설정 파일을 복사합니다...\n'));
+        console.log(chalk.cyan('설정 파일을 복사합니다...\n'));
         setupAgentConfigs(selectedAgents);
         console.log(chalk.green.bold('최고성능모드가 활성화되었습니다!\n'));
       } else {
@@ -197,14 +181,10 @@ async function main() {
     saveConfig(config);
   }
 
-  const { selection } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'selection',
-      message: '실행할 명령을 선택하세요',
-      choices
-    }
-  ]);
+  const selection = await select({
+    message: '실행할 명령을 선택하세요',
+    choices: menuChoices
+  });
 
   // 최고성능 활성화 옵션 선택 시
   if (selection === 'setup_high_performance') {
