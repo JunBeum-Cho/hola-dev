@@ -22,7 +22,7 @@
     "format": "text"
   },
   "ui": {
-    "theme": "dark",
+    "theme": "Atom One",
     "customThemes": {},
     "hideWindowTitle": false,
     "showStatusInTitle": true,

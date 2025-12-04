@@ -1,0 +1,82 @@
+{
+  "general": {
+    "apiKeyHelper": null,
+    "cleanupPeriodDays": 0,
+    "companyAnnouncements": [],
+    "env": {
+      "ANTHROPIC_MODEL": "claude-opus-4-5-20251101",
+      "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8192",
+      "MAX_THINKING_TOKENS": "4096",
+      "DISABLE_PROMPT_CACHING": "0",
+      "DISABLE_TELEMETRY": "1",
+      "BASH_MAX_OUTPUT_LENGTH": "1000000",
+      "BASH_MAX_TIMEOUT_MS": "300000"
+    },
+    "includeCoAuthoredBy": false,
+    "hooks": {
+      "PreToolUse": {}
+    },
+    "disableAllHooks": true,
+    "model": "claude-opus-4-5-20251101",
+    "statusLine": {
+      "type": "command",
+      "command": "echo 'High Performance Mode'"
+    },
+    "outputStyle": "Explanatory",
+    "organizationUUID": null,
+    "enableAllProjectMcpServers": true,
+    "enabledMcpjsonServers": ["memory", "github", "web", "filesystem"],
+    "disabledMcpjsonServers": []
+  },
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)"
+    ],
+    "ask": [],
+    "deny": [
+      "Read(.env*)",
+      "Read(secrets/**)"
+    ],
+    "additionalDirectories": [
+      "/tmp/",
+      "../docs/"
+    ],
+    "defaultMode": "acceptEdits",
+    "disableBypassPermissionsMode": "disable"
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": [
+      "git",
+      "docker"
+    ],
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowUnixSockets": [
+        "~/.ssh/agent-socket"
+      ],
+      "allowLocalBinding": true,
+      "httpProxyPort": null,
+      "socksProxyPort": null
+    },
+    "enableWeakerNestedSandbox": false
+  },
+  "plugins": {
+    "enabledPlugins": {
+      "formatter@company-tools": true,
+      "analyzer@security-plugins": true
+    },
+    "extraKnownMarketplaces": {
+      "company-tools": {
+        "source": {
+          "github": {
+            "repo": "company/claude-plugins"
+          }
+        }
+      }
+    }
+  }
+}
