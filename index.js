@@ -1,26 +1,31 @@
 #!/usr/bin/env node
 const inquirer = require('inquirer');
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
+const commandExists = require('command-exists');
+const chalk = require('chalk');
 
 const actions = [
   {
     key: 'codex',
     name: 'Codex (GPT) 실행',
     command: 'codex',
-    args: ['--dangerously-bypass-approvals-and-sandbox']
+    args: ['--dangerously-bypass-approvals-and-sandbox'],
+    package: '@openai/codex'
   },
   {
     key: 'claude',
     name: 'Claude 실행',
     command: 'claude',
     args: ['--dangerously-skip-permissions'],
-    env: { IS_SANDBOX: '1' }
+    env: { IS_SANDBOX: '1' },
+    package: '@anthropic-ai/claude-code'
   },
   {
     key: 'gemini',
     name: 'Gemini 실행',
     command: 'gemini',
-    args: ['--yolo']
+    args: ['--yolo'],
+    package: '@google/gemini-cli'
   }
 ];
 
@@ -28,6 +33,7 @@ const choices = actions.map(action => ({
   name: action.name,
   value: action.key
 }));
+
 
 async function main() {
   const { selection } = await inquirer.prompt([
@@ -43,6 +49,28 @@ async function main() {
   if (!action) {
     console.error('Unknown option selected. Exiting.');
     process.exit(1);
+  }
+  
+  let installed = false;
+  try {
+    await commandExists(action.command);
+    installed = true;
+  } catch {
+    // 명령어가 설치되어 있지 않음
+  }
+  
+  if (!installed) {
+    console.log(chalk.green.bold('==============================================\n'));
+    console.log(chalk.green.bold(`${action.command}가 설치되어 있지 않습니다. 설치를 시작합니다...`));
+    console.log(chalk.green.bold(`npm install -g ${action.package}\n`));
+    console.log(chalk.green.bold('==============================================\n'));
+    try {
+      execSync(`npm install -g ${action.package}`, { stdio: 'inherit' });
+      console.log(chalk.green.bold(`\n${action.package} 설치 완료!\n`));
+    } catch (error) {
+      console.error(chalk.red.bold(`\n설치 실패: ${error.message}\n`));
+      process.exit(1);
+    }
   }
 
   runAction(action);
