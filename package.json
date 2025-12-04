@@ -1,0 +1,24 @@
+{
+  "name": "hola-dev",
+  "version": "0.1.0",
+  "description": "Inquirer-based CLI for launching LLM commands.",
+  "main": "index.js",
+  "bin": {
+    "ai": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "cli",
+    "ai"
+  ],
+  "author": "Junbeum Cho",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^8.2.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
