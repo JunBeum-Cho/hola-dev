@@ -75,9 +75,9 @@ function setupAgentConfigs(selectedAgents) {
     const destFolder = path.join(homeDir, folderName);
     
     if (copyFolderRecursive(srcFolder, destFolder)) {
-      console.log(chalk.green(`  ✅ ${folderName} → ~/${folderName} 복사 완료`));
+      console.log(chalk.green(`${folderName} → ~/${folderName} 복사 완료`));
     } else {
-      console.log(chalk.yellow(`  ⚠️  ${folderName} 소스 폴더가 없습니다`));
+      console.log(chalk.yellow(`${folderName} 소스 폴더가 없습니다`));
     }
   }
 }
@@ -174,7 +174,7 @@ async function main() {
       
       config = { initialized: true, highPerformanceMode: true, selectedAgents };
     } else {
-      console.log(chalk.yellow.bold('최고성능모드가 비활성화되었습니다.\n'));
+      console.log(chalk.yellow.bold('최고 성능 모드가 비활성화되었습니다.\n'));
       config = { initialized: true, highPerformanceMode: false, selectedAgents: [] };
     }
     
