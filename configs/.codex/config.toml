@@ -1,0 +1,74 @@
+# Codex config.toml for maximum permissions and performance
+# Based on https://github.com/openai/codex/blob/main/docs/config.md
+# WARNING: This enables FULL SYSTEM ACCESS and disables ALL safety features.
+# EXTREMELY DANGEROUS - Use ONLY in isolated environments (e.g., Docker/VM).
+# Not for production or personal machines. May lead to data loss, security breaches, or high costs.
+
+# Model Settings for Highest Capability
+model = "gpt-5.1-codex-max"  # Strongest model for max performance
+model_provider = "openai"    # Default provider; use low-latency one if available
+model_context_window = 128000  # Max context for handling large/complex tasks (adjust per model)
+model_reasoning_effort = "xhigh"  # Maximum reasoning depth for best results
+model_reasoning_summary = "detailed"  # Full summaries for in-depth output
+model_verbosity = "high"     # Maximum detail in responses
+model_supports_reasoning_summaries = true  # Force summaries if supported
+model_reasoning_summary_format = "experimental"  # Enable advanced format for better perf
+
+# OSS Provider (if using --oss; optional for max local perf)
+oss_provider = "ollama"      # Or "lmstudio" for offline high-perf runs
+
+# Permissions: Maximum Access, No Safety
+approval_policy = "never"    # Auto-execute ALL commands without prompts
+sandbox_mode = "danger-full-access"  # FULL system access; no sandbox restrictions
+
+# Sandbox Workspace Write (even in danger mode, set for completeness/network)
+[sandbox_workspace_write]
+writable_roots = ["/"]       # Theoretical full write access (danger mode overrides)
+network_access = true        # Full outbound network access
+exclude_tmpdir_env_var = false
+exclude_slash_tmp = false
+
+# Shell Environment: Inherit Everything, No Exclusions
+inherit = "all"              # Inherit full parent env for max flexibility
+ignore_default_excludes = true  # Include sensitive vars (KEY/SECRET/TOKEN) - RISKY
+exclude = []                 # No exclusions
+set = { CI = "1" }           # Example; add perf-related vars if needed
+include_only = []            # No whitelist; full access
+
+# Features: Enable All for Max Functionality
+web_search_request = true    # Allow model-initiated web searches
+unified_exec = true          # Experimental unified exec for better tool handling
+rmcp_client = true           # Enable OAuth for advanced servers
+apply_patch_freeform = true  # Freeform patching for flexible edits
+view_image_tool = true       # Image viewing tool
+experimental_sandbox_command_assessment = true  # Model-based assessment (if useful)
+ghost_commit = true          # Ghost commits for non-destructive testing
+enable_experimental_windows_sandbox = false  # Disable if not Windows; no perf impact
+
+# MCP Servers: Enable All with Max Timeouts (example for one server; add more)
+enabled = true
+enabled_tools = []           # Empty = all tools enabled
+disabled_tools = []          # No disables
+startup_timeout_sec = 60     # Longer timeout for complex startups
+tool_timeout_sec = 300       # Max for long-running tools
+
+# Model Providers: Max Reliability for High Perf
+request_max_retries = 10     # High retries for minimal downtime
+stream_max_retries = 10      # Robust streaming
+stream_idle_timeout_ms = 600000  # 10 min for long responses
+
+# History: Unlimited for Full Session Retention
+history.persistence = "save-all"
+history.max_bytes = 0        # No pruning; keep everything
+
+# Output/UI Optimizations: Minimize Overhead for Speed
+hide_agent_reasoning = false  # Show all for transparency (but high perf needs detail)
+show_raw_agent_reasoning = true  # Raw CoT for max insight
+tui.notifications = true     # Keep enabled if needed
+tui.animations = false       # Disable to reduce CPU/rendering load
+notify = []                  # No external notifies for simplicity
+
+# Security/Other: Max Access Settings
+cli_auth_credentials_store = "keyring"  # Secure but no perf impact
+forced_chatgpt_workspace_id = ""     # Empty = no restriction
+cli_auth_method = "api"      # Faster API auth if possible

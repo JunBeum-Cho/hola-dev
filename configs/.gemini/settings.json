@@ -1,0 +1,179 @@
+{
+  "general": {
+    "previewFeatures": true,
+    "preferredEditor": "code",
+    "vimMode": false,
+    "disableAutoUpdate": false,
+    "disableUpdateNag": false,
+    "checkpointing": {
+      "enabled": true
+    },
+    "enablePromptCompletion": true,
+    "retryFetchErrors": true,
+    "debugKeystrokeLogging": false,
+    "sessionRetention": {
+      "enabled": true,
+      "maxAge": "90d",
+      "maxCount": 100,
+      "minRetention": "1d"
+    }
+  },
+  "output": {
+    "format": "text"
+  },
+  "ui": {
+    "theme": "dark",
+    "customThemes": {},
+    "hideWindowTitle": false,
+    "showStatusInTitle": true,
+    "hideTips": false,
+    "hideBanner": false,
+    "hideContextSummary": false,
+    "footer": {
+      "hideCWD": false,
+      "hideSandboxStatus": false,
+      "hideModelInfo": false,
+      "hideContextPercentage": false
+    },
+    "hideFooter": false,
+    "showMemoryUsage": true,
+    "showLineNumbers": true,
+    "showCitations": true,
+    "showModelInfoInChat": true,
+    "useFullWidth": true,
+    "useAlternateBuffer": true,
+    "incrementalRendering": true,
+    "customWittyPhrases": [],
+    "accessibility": {
+      "disableLoadingPhrases": false,
+      "screenReader": false
+    }
+  },
+  "ide": {
+    "enabled": true,
+    "hasSeenNudge": true
+  },
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+  "security": {
+    "disableYoloMode": false,
+    "blockGitExtensions": false
+  },
+  "tools": {
+    "autoAccept": true,
+    "allowed": ["*"],
+    "sandbox": false,
+    "enableToolOutputTruncation": true,
+    "truncateToolOutputThreshold": 2000000,
+    "truncateToolOutputLines": 1000,
+    "useRipgrep": true,
+    "enableHooks": true,
+    "enableMessageBusIntegration": true
+  },
+  "experimental": {
+    "jitContext": true,
+    "codebaseInvestigatorSettings": {
+      "model": "gemini-3-pro-preview",
+      "thinkingBudget": 16384
+    },
+    "extensionManagement": true,
+    "extensionReloading": true
+  },
+  "advanced": {
+    "autoConfigureMemory": true
+  },
+  "model": {
+    "name": "gemini-3-pro-preview",
+    "maxSessionTurns": -1,
+    "summarizeToolOutput": {
+      "run_shell_command": {
+        "tokenBudget": 2000
+      }
+    },
+    "compressionThreshold": 0.2
+  },
+  "modelConfigs": {
+    "aliases": {
+      "high-performance": {
+        "extends": "chat-base-3",
+        "modelConfig": {
+          "model": "gemini-3-pro-preview",
+          "generateContentConfig": {
+            "temperature": 0.7,
+            "topP": 0.95,
+            "topK": 64,
+            "maxOutputTokens": 16000,
+            "thinkingConfig": {
+              "includeThoughts": true,
+              "thinkingBudget": 16384,
+              "thinkingLevel": "HIGH"
+            },
+            "tools": [
+              {
+                "googleSearch": {}
+              },
+              {
+                "urlContext": {}
+              },
+              {
+                "run_shell_command": {}
+              }
+            ]
+          }
+        }
+      }
+    },
+    "customAliases": {
+      "max-power": {
+        "extends": "high-performance",
+        "modelConfig": {
+          "generateContentConfig": {
+            "safetySettings": [
+              {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_NONE"
+              },
+              {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_NONE"
+              },
+              {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE"
+              },
+              {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_NONE"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "overrides": [
+      {
+        "match": {
+          "model": "gemini-3-pro-preview"
+        },
+        "modelConfig": {
+          "generateContentConfig": {
+            "maxOutputTokens": 16000
+          }
+        }
+      }
+    ]
+  },
+  "context": {
+    "discoveryMaxDirs": 500,
+    "includeDirectories": [],
+    "loadMemoryFromIncludeDirectories": true,
+    "fileFiltering": {
+      "respectGitIgnore": true,
+      "respectGeminiIgnore": true,
+      "enableRecursiveFileSearch": true
+    },
+    "fileName": ["AGENTS.md"]
+  },
+  "apiKey": "YOUR_GEMINI_API_KEY_HERE"
+}
