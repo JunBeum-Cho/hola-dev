@@ -237,7 +237,7 @@ function runAction(action) {
     stdio: 'inherit',
     cwd: action.cwd || process.cwd(),
     env: { ...process.env, ...(action.env || {}) },
-    shell: process.platform !== 'win32' 
+    shell: process.platform == 'win32' 
   });
 
   child.on('exit', (code, signal) => {
