@@ -6,7 +6,7 @@
     "disableAutoUpdate": false,
     "disableUpdateNag": false,
     "checkpointing": {
-      "enabled": true
+      "enabled": false
     },
     "enablePromptCompletion": true,
     "retryFetchErrors": true,
