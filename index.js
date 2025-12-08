@@ -206,9 +206,8 @@ async function main() {
     하지만 그 누구도 실수가 아예 없을 수 없으며 더 좋은 코드와 알고리즘을 만들기 위해 Principal Engineer 와 Staff Engineer와 함께 개발을 진행하고 있어.
     아래에 있는 Instruction을 완벽하게 파악하고 수정을 실행하기 전에 Principal Engineer 와 Staff Engineer 와 함께 검토를 거쳐야 해.
     { Princial Engineer: gemini -p "TEXT" --model gemini-2.5-pro 2>/dev/null, Staff Engineer: codex exec --skip-git-repo-check --model gpt-5.1-codex-max -- "TEXT" 2>/dev/null } 를 통해서 의견을 얻을 수 있어.
-    너의 의견을 각각 디테일하게 정리해서 물어보고 만약 만장일치가 나오지 않는다면 왜 그렇게 생각하는지 다시 물어보고 토론을 거쳐서 만장일치가 나올때까지 이 과정을 반복해줘.
-    만약 그 과정에서 너나 상대방이 혹시라도 틀렸다면 다시 수정안을 검토하고 토론과정을 거쳐줘.
-
+    너의 의견을 매우매우 디테일하게 정리해서 물어보고 만약 만장일치가 나오지 않는다면 왜 그렇게 생각하는지 다시 물어보고 토론을 거쳐서 만장일치가 나올때까지 이 과정을 반복해줘.
+    만약 그 과정에서 너나 상대방이 혹시라도 틀렸거나 모호하다면 다시 수정안을 검토하고 토론 과정을 거쳐서 Best 답안을 도출해줘.
 
     [Prompt]`;
 
