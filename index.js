@@ -6,6 +6,19 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+let clipboardy;
+
+try {
+  clipboardy = require('clipboardy');
+} catch (error) {
+  if (error && error.code === 'MODULE_NOT_FOUND') {
+    console.error(
+      chalk.red.bold('clipboardy가 설치되어 있지 않습니다. npm install clipboardy 후 다시 실행하세요.')
+    );
+    process.exit(1);
+  }
+  throw error;
+}
 
 // 설정 파일 경로 (패키지가 설치된 곳의 configs 폴더)
 const configDir = path.join(__dirname, 'configs');
@@ -82,6 +95,7 @@ function setupAgentConfigs(selectedAgents) {
   }
 }
 
+
 const agentChoices = [
   { name: 'Claude', value: 'claude' },
   { name: 'Codex (GPT)', value: 'codex' },
@@ -141,7 +155,8 @@ const menuChoices = [
     name: action.name,
     value: action.key
   })),
-  { name: '최고성능 활성화', value: 'setup_high_performance' }
+  { name: '최고성능 활성화', value: 'setup_high_performance' },
+  { name: 'Copy Multi-Agent Prompt', value: 'copy-multi-agent-prompt' }
 ];
 
 
@@ -185,6 +200,26 @@ async function main() {
     message: '실행할 명령을 선택하세요',
     choices: menuChoices
   });
+
+  if (selection === 'copy-multi-agent-prompt') {
+    const MULTI_AGENT_PROMPT = `너는 퀀트 5년차 Senior Quant Trading Engineer 이야. 시장에 대해서 매우 잘알고 코드가 어떻게 돌아가는지에 대해서 그 누구보다도 잘알고 실수하나 없는 완벽한 Engineer이야.
+    하지만 그 누구도 실수가 아예 없을 수 없으며 더 좋은 코드와 알고리즘을 만들기 위해 Principal Engineer 와 Staff Engineer와 함께 개발을 진행하고 있어.
+    아래에 있는 Instruction을 완벽하게 파악하고 수정을 실행하기 전에 Principal Engineer 와 Staff Engineer 와 함께 검토를 거쳐야 해.
+    { Princial Engineer: gemini -p "text" 2>/dev/null, Staff Engineer: claude -p "text" --output-format text } 를 통해서 의견을 얻을 수 있어.
+    만약 만장일치가 나오지 않는다면 왜 그렇게 생각하는지 다시 물어보고 토론을 거쳐서 만장일치가 나올때까지 이 과정을 반복해줘. 만약 그 과정에서 너가 틀렸다면 다시 수정안을 검토하고 토론과정을 거쳐줘.
+
+
+    [Prompt]`;
+
+    try {
+      clipboardy.writeSync(MULTI_AGENT_PROMPT);
+      console.log(chalk.green(`"${MULTI_AGENT_PROMPT}" 문구를 클립보드에 복사했습니다. (사용: clipboardy)`));
+      process.exit(0);
+    } catch (error) {
+      console.error(chalk.red(`클립보드 복사 실패: ${error.message}`));
+      process.exit(1);
+    }
+  }
 
   // 최고성능 활성화 옵션 선택 시
   if (selection === 'setup_high_performance') {
@@ -258,3 +293,6 @@ main().catch(error => {
   console.error(`Unexpected error: ${error.message}`);
   process.exit(1);
 });
+
+
+
