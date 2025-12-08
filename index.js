@@ -210,7 +210,8 @@ async function main() {
     
     너의 의견을 매우매우 디테일하게 정리해서 물어보고 만약 만장일치가 나오지 않는다면 왜 그렇게 생각하는지 다시 물어보고 토론을 거쳐서 만장일치가 나올때까지 이 과정을 반복해줘.
     만약 그 과정에서 너나 상대방이 혹시라도 틀렸거나 모호하다면 다시 수정안을 검토하고 토론 과정을 거쳐서 Best 답안을 도출해줘.
-    참고로 살펴봐야할 항목들이 여러개라면 Princial Engineer와 Staff Engineer 에게 한번에 물어보지말고 하나하나씩 물어봐줘. 그리고 물어볼때는 꼭!! 파일 경로를 명시해줘.
+    DO NOT REVISE THE CODE BEFORE PRINCIPAL ENGINEER AND STAFF ENGINEER'S APPROVAL.
+    참고로 살펴봐야할 항목들이 여러개라면 Princial Engineer와 Staff Engineer 에게 한번에 물어보지말고 하나하나씩 물어봐줘. 그리고 물어볼때는 꼭!! 파일 경로를 명시해줘야해.
 
     [Prompt]`;
 
