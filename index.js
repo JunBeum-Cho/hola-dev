@@ -32,6 +32,27 @@ const agentConfigFolders = {
   gemini: '.gemini'
 };
 
+// Agent 모드 설정
+const agentModes = {
+  editors: {
+    name: 'Editors Mode',
+    codex: { file: 'senior-editor.md', displayName: 'Senior Editor' },
+    claude: { file: 'chief-editor.md', displayName: 'Chief Editor' }
+  },
+  frontend_designer: {
+    name: 'Frontend-Designer Mode',
+    codex: { file: 'principal-frontend-engineer.md', displayName: 'Principal Frontend Engineer' },
+    claude: { file: 'staff-designer.md', displayName: 'Staff Designer' }
+  },
+  quant: {
+    name: 'Quant Mode',
+    codex: { file: 'senior-quant-engineer.md', displayName: 'Senior Quant Engineer' },
+    claude: { file: 'head-of-quant.md', displayName: 'Head of Quant' }
+  }
+};
+
+const agentsDir = path.join(__dirname, 'agents');
+
 function loadConfig() {
   try {
     if (fs.existsSync(configPath)) {
@@ -95,6 +116,14 @@ function setupAgentConfigs(selectedAgents) {
   }
 }
 
+function getAgentModeStatus(config) {
+  if (!config || !config.agentMode || !config.agentMode.mode) {
+    return null;
+  }
+  const mode = agentModes[config.agentMode.mode];
+  if (!mode) return null;
+  return `Codex: ${mode.codex.displayName} | Claude: ${mode.claude.displayName}`;
+}
 
 const agentChoices = [
   { name: 'Claude', value: 'claude' },
@@ -122,6 +151,93 @@ async function setupHighPerformanceMode() {
     saveConfig(config);
   } else {
     console.log(chalk.yellow.bold('선택된 에이전트가 없습니다.\n'));
+  }
+}
+
+async function setupAgentMode() {
+  const config = loadConfig() || {};
+
+  // 현재 활성화된 모드 표시
+  const currentStatus = getAgentModeStatus(config);
+  if (currentStatus) {
+    console.log(chalk.cyan(`\n현재 Agent 모드: ${currentStatus}\n`));
+  }
+
+  const modeChoices = [
+    { name: 'Editors Mode', value: 'editors' },
+    { name: 'Frontend-Designer Mode', value: 'frontend_designer' },
+    { name: 'Quant Mode', value: 'quant' },
+    { name: '초기화하기', value: 'reset' }
+  ];
+
+  const selectedMode = await select({
+    message: 'Agent 모드를 선택하세요',
+    choices: modeChoices
+  });
+
+  if (selectedMode === 'reset') {
+    const codexDestDir = path.join(homeDir, '.codex');
+    const claudeDestDir = path.join(homeDir, '.claude');
+    const codexFilePath = path.join(codexDestDir, 'AGENTS.md');
+    const claudeFilePath = path.join(claudeDestDir, 'CLAUDE.md');
+
+    try {
+      if (fs.existsSync(codexFilePath)) {
+        fs.unlinkSync(codexFilePath);
+        console.log(chalk.green('~/.codex/AGENTS.md 삭제 완료'));
+      }
+      if (fs.existsSync(claudeFilePath)) {
+        fs.unlinkSync(claudeFilePath);
+        console.log(chalk.green('~/.claude/CLAUDE.md 삭제 완료'));
+      }
+
+      // 설정에서 agentMode 제거
+      delete config.agentMode;
+      saveConfig(config);
+
+      console.log(chalk.green.bold('\nAgent 모드가 초기화되었습니다!\n'));
+    } catch (error) {
+      console.error(chalk.red.bold(`초기화 실패: ${error.message}`));
+    }
+    return;
+  }
+
+  const mode = agentModes[selectedMode];
+
+  // 대상 디렉토리 생성 및 파일 복사
+  const codexDestDir = path.join(homeDir, '.codex');
+  const claudeDestDir = path.join(homeDir, '.claude');
+
+  try {
+    // .codex 디렉토리 생성 (없으면)
+    if (!fs.existsSync(codexDestDir)) {
+      fs.mkdirSync(codexDestDir, { recursive: true });
+    }
+    // .claude 디렉토리 생성 (없으면)
+    if (!fs.existsSync(claudeDestDir)) {
+      fs.mkdirSync(claudeDestDir, { recursive: true });
+    }
+
+    // Codex용 파일 복사 → AGENTS.md
+    const codexSrcPath = path.join(agentsDir, mode.codex.file);
+    const codexDestPath = path.join(codexDestDir, 'AGENTS.md');
+    fs.copyFileSync(codexSrcPath, codexDestPath);
+
+    // Claude용 파일 복사 → CLAUDE.md
+    const claudeSrcPath = path.join(agentsDir, mode.claude.file);
+    const claudeDestPath = path.join(claudeDestDir, 'CLAUDE.md');
+    fs.copyFileSync(claudeSrcPath, claudeDestPath);
+
+    // 설정 저장
+    config.agentMode = {
+      mode: selectedMode,
+      codex: mode.codex.displayName,
+      claude: mode.claude.displayName
+    };
+    saveConfig(config);
+
+  } catch (error) {
+    console.error(chalk.red.bold(`Agent 모드 설정 실패: ${error.message}`));
   }
 }
 
@@ -155,6 +271,7 @@ const menuChoices = [
     name: action.name,
     value: action.key
   })),
+  { name: 'Agent 모드 설정', value: 'setup_agent_mode' },
   { name: '최고성능 활성화', value: 'setup_high_performance' },
   { name: 'Copy Multi-Agent Prompt', value: 'copy-multi-agent-prompt' }
 ];
@@ -196,6 +313,12 @@ async function main() {
     saveConfig(config);
   }
 
+  // 현재 Agent 모드 상태 표시
+  const agentModeStatus = getAgentModeStatus(config);
+  if (agentModeStatus) {
+    console.log(chalk.cyan.bold(`\n[Active Agent Mode] ${agentModeStatus}\n`));
+  }
+
   const selection = await select({
     message: '실행할 명령을 선택하세요',
     choices: menuChoices
@@ -223,6 +346,12 @@ async function main() {
       console.error(chalk.red(`클립보드 복사 실패: ${error.message}`));
       process.exit(1);
     }
+  }
+
+  // Agent 모드 설정 선택 시
+  if (selection === 'setup_agent_mode') {
+    await setupAgentMode();
+    return main(); // 다시 메뉴로 돌아가기
   }
 
   // 최고성능 활성화 옵션 선택 시

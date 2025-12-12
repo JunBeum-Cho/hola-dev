@@ -3,5 +3,10 @@
   "highPerformanceMode": true,
   "selectedAgents": [
     "claude"
-  ]
+  ],
+  "agentMode": {
+    "mode": "quant",
+    "codex": "Senior Quant Engineer",
+    "claude": "Head of Quant"
+  }
 }
