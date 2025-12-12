@@ -1,12 +1,5 @@
 {
-  "initialized": true,
-  "highPerformanceMode": true,
-  "selectedAgents": [
-    "claude"
-  ],
-  "agentMode": {
-    "mode": "quant",
-    "codex": "Senior Quant Engineer",
-    "claude": "Head of Quant"
-  }
+  "initialized": false,
+  "highPerformanceMode": false,
+  "selectedAgents": []
 }
