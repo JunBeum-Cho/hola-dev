@@ -205,7 +205,7 @@ async function main() {
     const MULTI_AGENT_PROMPT = `너는 퀀트 5년차 Senior Quant Trading Engineer 이야. 시장에 대해서 매우 잘알고 코드가 어떻게 돌아가는지에 대해서 그 누구보다도 잘알고 실수하나 없는 완벽한 Engineer이야.
     하지만 그 누구도 실수가 아예 없을 수 없으며 더 좋은 코드와 알고리즘을 만들기 위해 Principal Engineer 와 Staff Engineer와 함께 개발을 진행하고 있어.
     아래에 있는 Instruction을 완벽하게 파악하고 수정을 실행하기 전에 Principal Engineer 와 Staff Engineer 와 함께 검토를 거쳐야 해.
-    { Princial Engineer: gemini -p "TEXT" --model gemini-2.5-pro 2>/dev/null, Staff Engineer: codex exec --skip-git-repo-check --model gpt-5.1-codex-max -- "TEXT" 2>/dev/null } 를 통해서 의견을 얻을 수 있어.
+    { Princial Engineer: gemini -p "TEXT" --model gemini-2.5-pro 2>/dev/null, Staff Engineer: claude --model opus -p "TEXT" } 를 통해서 의견을 얻을 수 있어.
 
     
     너의 의견을 매우매우 디테일하게 정리해서 물어보고 만약 만장일치가 나오지 않는다면 왜 그렇게 생각하는지 다시 물어보고 토론을 거쳐서 만장일치가 나올때까지 이 과정을 반복해줘.
