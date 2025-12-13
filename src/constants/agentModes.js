@@ -42,7 +42,7 @@ export const actions = [
     key: 'claude',
     name: 'Claude 실행',
     command: 'claude',
-    args: ['--model opus --dangerously-skip-permissions'],
+    args: ['--dangerously-skip-permissions'],
     env: { IS_SANDBOX: '1' },
     package: '@anthropic-ai/claude-code'
   },
