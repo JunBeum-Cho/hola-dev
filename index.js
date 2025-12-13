@@ -190,7 +190,9 @@ async function setupAuthSettings() {
         return;
       }
       const content = fs.readFileSync(targetPath, 'utf8');
-      clipboardy.writeSync(content);
+      // JSON을 파싱 후 한 줄로 변환 (줄바꿈 제거)
+      const singleLineContent = JSON.stringify(JSON.parse(content));
+      clipboardy.writeSync(singleLineContent);
       console.log(chalk.green(`${selectedAgent} 인증 정보를 클립보드에 복사했습니다.`));
       console.log(chalk.gray(`경로: ${targetPath}`));
     } catch (error) {
