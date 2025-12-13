@@ -53,7 +53,7 @@
       "git",
       "docker"
     ],
-    "allowUnsandboxedCommands": false,
+    "allowUnsandboxedCommands": true,
     "network": {
       "allowUnixSockets": [
         "~/.ssh/agent-socket"
@@ -73,7 +73,7 @@
       "company-tools": {
         "source": {
           "github": {
-            "repo": "company/claude-plugins"
+            "repo": ""
           }
         }
       }

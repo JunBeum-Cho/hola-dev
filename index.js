@@ -44,6 +44,11 @@ const agentModes = {
     codex: { file: 'principal-frontend-engineer.md', displayName: 'Principal Frontend Engineer' },
     claude: { file: 'staff-designer.md', displayName: 'Staff Designer' }
   },
+  server_engineering: {
+    name: 'Server Engineering Mode',
+    codex: { file: 'senior-server-engineer.md', displayName: 'Senior Server Engineer' },
+    claude: { file: 'staff-server-engineer.md', displayName: 'Staff Server Engineer' }
+  },
   quant: {
     name: 'Quant Mode',
     codex: { file: 'senior-quant-engineer.md', displayName: 'Senior Quant Engineer' },
@@ -166,6 +171,7 @@ async function setupAgentMode() {
   const modeChoices = [
     { name: 'Editors Mode', value: 'editors' },
     { name: 'Frontend-Designer Mode', value: 'frontend_designer' },
+    { name: 'Server Engineering Mode', value: 'server_engineering' },
     { name: 'Quant Mode', value: 'quant' },
     { name: '초기화하기', value: 'reset' }
   ];
@@ -426,7 +432,6 @@ main().catch(error => {
   console.error(`Unexpected error: ${error.message}`);
   process.exit(1);
 });
-
 
 
 
