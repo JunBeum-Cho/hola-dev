@@ -1,24 +1,17 @@
 #!/usr/bin/env node
-const { select, checkbox, confirm, input } = require('@inquirer/prompts');
-const { spawn, execSync } = require('child_process');
-const commandExists = require('command-exists');
-const chalk = require('chalk');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-let clipboardy;
+import { select, checkbox, confirm, input } from '@inquirer/prompts';
+import { spawn, execSync } from 'child_process';
+import commandExists from 'command-exists';
+import chalk from 'chalk';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import { fileURLToPath } from 'url';
+import clipboardy from 'clipboardy';
 
-try {
-  clipboardy = require('clipboardy');
-} catch (error) {
-  if (error && error.code === 'MODULE_NOT_FOUND') {
-    console.error(
-      chalk.red.bold('clipboardy가 설치되어 있지 않습니다. npm install clipboardy 후 다시 실행하세요.')
-    );
-    process.exit(1);
-  }
-  throw error;
-}
+// ES Modules에서 __dirname 대체
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 설정 파일 경로 (패키지가 설치된 곳의 configs 폴더)
 const configDir = path.join(__dirname, 'configs');
