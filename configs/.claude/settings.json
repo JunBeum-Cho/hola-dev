@@ -65,10 +65,6 @@
     "enableWeakerNestedSandbox": false
   },
   "plugins": {
-    "enabledPlugins": {
-      "formatter@company-tools": true,
-      "analyzer@security-plugins": true
-    },
     "extraKnownMarketplaces": {
       "company-tools": {
         "source": {
