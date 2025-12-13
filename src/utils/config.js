@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { HOLA_CONFIG } from '../constants/paths.js';
-import { safeReadJSON, safeWriteJSON } from '../utils/filesystem.js';
+import { safeReadJSON, safeWriteJSON } from './filesystem.js';
 
 export function loadConfig() {
   return safeReadJSON(HOLA_CONFIG.file, null);

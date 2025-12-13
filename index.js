@@ -10,7 +10,7 @@ import clipboardy from 'clipboardy';
 // 모듈 import
 import { homeDir, configDir, agentsDir, AGENT_PATHS } from './src/constants/paths.js';
 import { ensureDir, copyFolderRecursive, fileExists, deleteFileIfExists } from './src/utils/filesystem.js';
-import { loadConfig, saveConfig } from './src/config/configManager.js';
+import { loadConfig, saveConfig } from './src/utils/config.js';
 import {
   agentConfigFolders,
   agentModes,
