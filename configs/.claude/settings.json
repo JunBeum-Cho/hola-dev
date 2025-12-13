@@ -10,7 +10,7 @@
       "DISABLE_PROMPT_CACHING": "0",
       "DISABLE_TELEMETRY": "1",
       "BASH_MAX_OUTPUT_LENGTH": "1000000",
-      "BASH_MAX_TIMEOUT_MS": "300000"
+      "BASH_MAX_TIMEOUT_MS": "86400000"
     },
     "includeCoAuthoredBy": false,
     "hooks": {
@@ -22,7 +22,7 @@
       "type": "command",
       "command": "echo 'High Performance Mode'"
     },
-    "outputStyle": "Explanatory",
+    "outputStyle": "Concise",
     "organizationUUID": null,
     "enableAllProjectMcpServers": true,
     "enabledMcpjsonServers": ["memory", "github", "web", "filesystem"],
@@ -30,7 +30,7 @@
   },
   "permissions": {
     "allow": [
-      "Bash(*)",
+      "Bash",
       "Read(*)",
       "Write(*)"
     ],
@@ -44,7 +44,7 @@
       "../docs/"
     ],
     "defaultMode": "acceptEdits",
-    "disableBypassPermissionsMode": "disable"
+    "disableBypassPermissionsMode": false
   },
   "sandbox": {
     "enabled": true,
@@ -53,26 +53,7 @@
       "git",
       "docker"
     ],
-    "allowUnsandboxedCommands": true,
-    "network": {
-      "allowUnixSockets": [
-        "~/.ssh/agent-socket"
-      ],
-      "allowLocalBinding": true,
-      "httpProxyPort": null,
-      "socksProxyPort": null
-    },
+    "allowUnsandboxedCommands": false,
     "enableWeakerNestedSandbox": false
-  },
-  "plugins": {
-    "extraKnownMarketplaces": {
-      "company-tools": {
-        "source": {
-          "github": {
-            "repo": ""
-          }
-        }
-      }
-    }
   }
 }
