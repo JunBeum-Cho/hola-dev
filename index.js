@@ -63,6 +63,88 @@ function loadConfig() {
   return null;
 }
 
+// GitHub에서 최신 커밋 시간 가져오기
+async function getLatestCommitTime() {
+  try {
+    const response = await fetch(`https://api.github.com/repos/JunBeum-Cho/hola-dev/commits/main`);
+    if (!response.ok) {
+      throw new Error(`GitHub API 응답 오류: ${response.status}`);
+    }
+    const data = await response.json();
+    return new Date(data.commit.committer.date).getTime();
+  } catch (error) {
+    console.error(chalk.yellow(`업데이트 확인 실패: ${error.message}`));
+    return null;
+  }
+}
+
+// 패키지 업데이트 및 재실행
+async function updateAndRestart() {
+  console.log(chalk.cyan('\n새로운 업데이트가 있습니다. 업데이트를 진행합니다...\n'));
+
+  try {
+    // npm으로 최신 버전 설치
+    execSync(`npm install -g https://github.com/JunBeum-Cho/hola-dev`, { stdio: 'inherit' });
+    console.log(chalk.green.bold('\n업데이트 완료! 재실행합니다...\n'));
+
+    // 현재 프로세스의 인자를 그대로 전달하여 재실행
+    const child = spawn(process.argv[0], process.argv.slice(1), {
+      stdio: 'inherit',
+      shell: process.platform === 'win32'
+    });
+
+    child.on('exit', (code) => {
+      process.exit(code || 0);
+    });
+
+    return true; // 재실행됨
+  } catch (error) {
+    console.error(chalk.red(`업데이트 실패: ${error.message}`));
+    console.log(chalk.yellow('기존 버전으로 계속 진행합니다.\n'));
+    return false;
+  }
+}
+
+// 업데이트 확인
+async function checkForUpdates() {
+  let config = loadConfig() || {};
+
+  // 최초 실행 시 현재 시간을 timestamp로 저장
+  if (!config.lastCheckedTimestamp) {
+    config.lastCheckedTimestamp = Date.now();
+    saveConfig(config);
+    return false; // 최초 실행 시에는 업데이트 체크 안함
+  }
+
+  const latestCommitTime = await getLatestCommitTime();
+  if (!latestCommitTime) {
+    return false;
+  }
+
+  // 저장된 timestamp보다 최신 커밋이 있으면 업데이트
+  if (latestCommitTime > config.lastCheckedTimestamp) {
+    const shouldUpdate = await confirm({
+      message: '새로운 업데이트가 있습니다. 업데이트하시겠습니까?',
+      default: true
+    });
+
+    if (shouldUpdate) {
+      // 업데이트 전에 새 timestamp 저장
+      config.lastCheckedTimestamp = latestCommitTime;
+      saveConfig(config);
+
+      const restarted = await updateAndRestart();
+      return restarted;
+    } else {
+      // 업데이트 거부해도 timestamp는 갱신 (다음에 또 물어보지 않도록)
+      config.lastCheckedTimestamp = latestCommitTime;
+      saveConfig(config);
+    }
+  }
+
+  return false;
+}
+
 function saveConfig(config) {
   try {
     if (!fs.existsSync(configDir)) {
@@ -350,9 +432,15 @@ const menuChoices = [
 
 
 async function main() {
+  // 업데이트 확인 (재실행되면 여기서 종료)
+  const restarted = await checkForUpdates();
+  if (restarted) {
+    return; // 재실행 중이므로 현재 프로세스는 종료
+  }
+
   // 설정 로드
   let config = loadConfig();
-  
+
   // 최초 실행 시 최고성능모드 물어보기
   if (!config || config.initialized !== true) {
     const enableHighPerformance = await confirm({
