@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { select, checkbox, confirm } = require('@inquirer/prompts');
+const { select, checkbox, confirm, input } = require('@inquirer/prompts');
 const { spawn, execSync } = require('child_process');
 const commandExists = require('command-exists');
 const chalk = require('chalk');
@@ -159,6 +159,76 @@ async function setupHighPerformanceMode() {
   }
 }
 
+async function setupAuthSettings() {
+  // 1단계: Auth 추출/주입 선택
+  const authAction = await select({
+    message: 'Auth 작업을 선택하세요',
+    choices: [
+      { name: 'Auth 추출', value: 'extract' },
+      { name: 'Auth 주입', value: 'inject' }
+    ]
+  });
+
+  // 2단계: 에이전트 선택
+  const authAgentChoices = [
+    { name: 'Codex', value: 'codex' },
+    { name: 'Claude', value: 'claude' },
+    { name: 'Gemini (미구현)', value: 'gemini', disabled: true }
+  ];
+
+  const selectedAgent = await select({
+    message: 'Agent를 선택하세요',
+    choices: authAgentChoices
+  });
+
+  // 파일 경로 매핑
+  const authPaths = {
+    codex: path.join(homeDir, '.codex', 'auth.json'),
+    claude: path.join(homeDir, '.claude', '.credentials.json')
+  };
+
+  const targetPath = authPaths[selectedAgent];
+
+  if (authAction === 'extract') {
+    // Auth 추출: 파일 읽어서 클립보드에 복사
+    try {
+      if (!fs.existsSync(targetPath)) {
+        console.error(chalk.red(`파일이 존재하지 않습니다: ${targetPath}`));
+        return;
+      }
+      const content = fs.readFileSync(targetPath, 'utf8');
+      clipboardy.writeSync(content);
+      console.log(chalk.green(`${selectedAgent} 인증 정보를 클립보드에 복사했습니다.`));
+      console.log(chalk.gray(`경로: ${targetPath}`));
+    } catch (error) {
+      console.error(chalk.red(`파일 읽기 실패: ${error.message}`));
+    }
+  } else {
+    // Auth 주입: input box로 입력받아 파일에 저장
+    const authContent = await input({
+      message: `${selectedAgent} 인증 정보를 붙여넣으세요:`
+    });
+
+    if (!authContent || authContent.trim() === '') {
+      console.log(chalk.yellow('입력이 취소되었습니다.'));
+      return;
+    }
+
+    try {
+      // 디렉토리가 없으면 생성
+      const dir = path.dirname(targetPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(targetPath, authContent, 'utf8');
+      console.log(chalk.green(`${selectedAgent} 인증 정보를 저장했습니다.`));
+      console.log(chalk.gray(`경로: ${targetPath}`));
+    } catch (error) {
+      console.error(chalk.red(`파일 저장 실패: ${error.message}`));
+    }
+  }
+}
+
 async function setupAgentMode() {
   const config = loadConfig() || {};
 
@@ -259,7 +329,7 @@ const actions = [
     key: 'claude',
     name: 'Claude 실행',
     command: 'claude',
-    args: ['--dangerously-skip-permissions'],
+    args: ['--model opus --dangerously-skip-permissions'],
     env: { IS_SANDBOX: '1' },
     package: '@anthropic-ai/claude-code'
   },
@@ -279,6 +349,7 @@ const menuChoices = [
   })),
   { name: 'Agent 모드 설정', value: 'setup_agent_mode' },
   { name: '최고성능 활성화', value: 'setup_high_performance' },
+  { name: 'Auth 설정', value: 'auth_settings' },
   { name: 'Copy Multi-Agent Prompt', value: 'copy-multi-agent-prompt' }
 ];
 
@@ -363,6 +434,12 @@ async function main() {
   // 최고성능 활성화 옵션 선택 시
   if (selection === 'setup_high_performance') {
     await setupHighPerformanceMode();
+    return main(); // 다시 메뉴로 돌아가기
+  }
+
+  // Auth 설정 선택 시
+  if (selection === 'auth_settings') {
+    await setupAuthSettings();
     return main(); // 다시 메뉴로 돌아가기
   }
 
