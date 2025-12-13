@@ -80,12 +80,12 @@ async function getLatestCommitTime() {
 
 // 패키지 업데이트 및 재실행
 async function updateAndRestart() {
-  console.log(chalk.cyan('\n새로운 업데이트가 있습니다. 업데이트를 진행합니다...\n'));
+  console.log(chalk.cyan('\n업데이트를 진행할게요'));
 
   try {
     // npm으로 최신 버전 설치
     execSync(`npm install -g https://github.com/JunBeum-Cho/hola-dev`, { stdio: 'inherit' });
-    console.log(chalk.green.bold('\n업데이트 완료! 재실행합니다...\n'));
+    console.log(chalk.green.bold('\n업데이트 완료! 재실행할게요\n'));
 
     // 현재 프로세스의 인자를 그대로 전달하여 재실행
     const child = spawn(process.argv[0], process.argv.slice(1), {
