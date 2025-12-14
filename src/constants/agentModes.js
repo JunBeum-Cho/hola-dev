@@ -26,6 +26,11 @@ export const agentModes = {
     name: 'Quant Mode',
     codex: { file: 'senior-quant-engineer.md', displayName: 'Senior Quant Engineer' },
     claude: { file: 'head-of-quant.md', displayName: 'Head of Quant' }
+  },
+  fullstack: {
+    name: 'Fullstack Mode',
+    codex: { file: 'senior-fullstack-engineer.md', displayName: 'Senior Fullstack Engineer' },
+    claude: { file: 'staff-fullstack-engineer.md', displayName: 'Staff Fullstack Engineer' }
   }
 };
 
@@ -68,6 +73,7 @@ export const modeChoices = [
   { name: 'Frontend-Designer Mode', value: 'frontend_designer' },
   { name: 'Server Engineering Mode', value: 'server_engineering' },
   { name: 'Quant Mode', value: 'quant' },
+  { name: 'Fullstack Mode', value: 'fullstack' },
   { name: '초기화하기', value: 'reset' }
 ];
 

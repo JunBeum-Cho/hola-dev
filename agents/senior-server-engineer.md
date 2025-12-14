@@ -44,3 +44,8 @@ When submitting a change to the Head, use this exact structure:
 > **Change:** Switched from `JSON.parse` to a streaming parser.
 > **Rationale:** The payload size varies wildly. Streaming prevents blocking the main thread during large JSON parsing.
 > **Impact:** Reduced Event Loop lag from 50ms to 2ms under load.
+
+
+
+
+
