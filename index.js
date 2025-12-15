@@ -20,6 +20,11 @@ import {
   menuChoices
 } from './src/constants/agentModes.js';
 
+const LOCAL_AGENT_FILES = {
+  codex: 'AGENTS.md',
+  claude: 'CLAUDE.md'
+};
+
 // GitHub에서 최신 커밋 시간 가져오기
 async function getLatestCommitTime() {
   try {
@@ -111,12 +116,53 @@ function setupAgentConfigs(selectedAgents) {
 }
 
 function getAgentModeStatus(config) {
-  if (!config || !config.agentMode || !config.agentMode.mode) {
-    return null;
-  }
-  const mode = agentModes[config.agentMode.mode];
+  const cwdKey = path.resolve(process.cwd());
+  const modeKey = config?.directories?.[cwdKey]?.agentMode?.mode ?? config?.agentMode?.mode;
+  if (!modeKey) return null;
+
+  const mode = agentModes[modeKey];
   if (!mode) return null;
   return `Codex: ${mode.codex.displayName} | Claude: ${mode.claude.displayName}`;
+}
+
+function ensureDirectoryConfig(config, directoryKey) {
+  if (!config.directories || typeof config.directories !== 'object' || Array.isArray(config.directories)) {
+    config.directories = {};
+  }
+
+  if (
+    !config.directories[directoryKey] ||
+    typeof config.directories[directoryKey] !== 'object' ||
+    Array.isArray(config.directories[directoryKey])
+  ) {
+    config.directories[directoryKey] = {};
+  }
+
+  return config.directories[directoryKey];
+}
+
+function markAgentInstalledForDirectory(config, directoryKey, agentKey, metadata = {}) {
+  const directoryConfig = ensureDirectoryConfig(config, directoryKey);
+
+  if (!Array.isArray(directoryConfig.installedAgents)) {
+    directoryConfig.installedAgents = [];
+  }
+  if (!directoryConfig.installedAgents.includes(agentKey)) {
+    directoryConfig.installedAgents.push(agentKey);
+  }
+
+  if (!directoryConfig.agents || typeof directoryConfig.agents !== 'object' || Array.isArray(directoryConfig.agents)) {
+    directoryConfig.agents = {};
+  }
+
+  const previous = directoryConfig.agents[agentKey];
+  const previousObject = previous && typeof previous === 'object' && !Array.isArray(previous) ? previous : {};
+  directoryConfig.agents[agentKey] = {
+    ...previousObject,
+    installed: true,
+    ...metadata,
+    updatedAt: new Date().toISOString()
+  };
 }
 
 async function setupHighPerformanceMode() {
@@ -203,6 +249,8 @@ async function setupAuthSettings() {
 
 async function setupAgentMode() {
   const config = loadConfig() || {};
+  const cwd = process.cwd();
+  const cwdKey = path.resolve(cwd);
 
   const currentStatus = getAgentModeStatus(config);
   if (currentStatus) {
@@ -216,14 +264,28 @@ async function setupAgentMode() {
 
   if (selectedMode === 'reset') {
     try {
-      if (deleteFileIfExists(AGENT_PATHS.codex.agents)) {
-        console.log(chalk.green('~/.codex/AGENTS.md 삭제 완료'));
+      const localCodexPath = path.join(cwd, LOCAL_AGENT_FILES.codex);
+      const localClaudePath = path.join(cwd, LOCAL_AGENT_FILES.claude);
+
+      if (deleteFileIfExists(localCodexPath)) {
+        console.log(chalk.green(`./${LOCAL_AGENT_FILES.codex} 삭제 완료`));
       }
-      if (deleteFileIfExists(AGENT_PATHS.claude.config)) {
-        console.log(chalk.green('~/.claude/CLAUDE.md 삭제 완료'));
+      if (deleteFileIfExists(localClaudePath)) {
+        console.log(chalk.green(`./${LOCAL_AGENT_FILES.claude} 삭제 완료`));
       }
 
       const updatedConfig = { ...config };
+      if (updatedConfig.directories?.[cwdKey]?.agentMode) {
+        delete updatedConfig.directories[cwdKey].agentMode;
+
+        if (Object.keys(updatedConfig.directories[cwdKey]).length === 0) {
+          delete updatedConfig.directories[cwdKey];
+        }
+        if (Object.keys(updatedConfig.directories).length === 0) {
+          delete updatedConfig.directories;
+        }
+      }
+
       delete updatedConfig.agentMode;
       saveConfig(updatedConfig);
 
@@ -237,23 +299,35 @@ async function setupAgentMode() {
   const mode = agentModes[selectedMode];
 
   try {
-    ensureDir(AGENT_PATHS.codex.dir);
-    ensureDir(AGENT_PATHS.claude.dir);
+    const localCodexPath = path.join(cwd, LOCAL_AGENT_FILES.codex);
+    const localClaudePath = path.join(cwd, LOCAL_AGENT_FILES.claude);
 
     const codexSrcPath = path.join(agentsDir, mode.codex.file);
-    fs.copyFileSync(codexSrcPath, AGENT_PATHS.codex.agents);
+    fs.copyFileSync(codexSrcPath, localCodexPath);
+    console.log(chalk.green(`./${LOCAL_AGENT_FILES.codex} 생성 완료`));
 
     const claudeSrcPath = path.join(agentsDir, mode.claude.file);
-    fs.copyFileSync(claudeSrcPath, AGENT_PATHS.claude.config);
+    fs.copyFileSync(claudeSrcPath, localClaudePath);
+    console.log(chalk.green(`./${LOCAL_AGENT_FILES.claude} 생성 완료`));
 
-    const updatedConfig = {
-      ...config,
-      agentMode: {
-        mode: selectedMode,
-        codex: mode.codex.displayName,
-        claude: mode.claude.displayName
-      }
+    const updatedConfig = { ...config };
+
+    const directoryConfig = ensureDirectoryConfig(updatedConfig, cwdKey);
+    directoryConfig.agentMode = {
+      mode: selectedMode,
+      codex: mode.codex.displayName,
+      claude: mode.claude.displayName,
+      files: {
+        codex: LOCAL_AGENT_FILES.codex,
+        claude: LOCAL_AGENT_FILES.claude
+      },
+      updatedAt: new Date().toISOString()
     };
+
+    markAgentInstalledForDirectory(updatedConfig, cwdKey, 'codex', { source: 'agentMode' });
+    markAgentInstalledForDirectory(updatedConfig, cwdKey, 'claude', { source: 'agentMode' });
+
+    delete updatedConfig.agentMode;
     saveConfig(updatedConfig);
   } catch (error) {
     console.error(chalk.red.bold(`Agent 모드 설정 실패: ${error.message}`));
@@ -289,10 +363,20 @@ async function main() {
         console.log(chalk.yellow.bold('선택된 에이전트가 없습니다.\n'));
       }
 
-      config = { initialized: true, highPerformanceMode: true, selectedAgents };
+      config = {
+        ...(config || {}),
+        initialized: true,
+        highPerformanceMode: true,
+        selectedAgents
+      };
     } else {
       console.log(chalk.yellow.bold('최고 성능 모드가 비활성화되었습니다.\n'));
-      config = { initialized: true, highPerformanceMode: false, selectedAgents: [] };
+      config = {
+        ...(config || {}),
+        initialized: true,
+        highPerformanceMode: false,
+        selectedAgents: []
+      };
     }
 
     saveConfig(config);
@@ -373,6 +457,18 @@ async function main() {
       console.error(chalk.red.bold(`\n설치 실패: ${error.message}\n`));
       process.exit(1);
     }
+  }
+
+  try {
+    const updatedConfig = loadConfig() || {};
+    const cwdKey = path.resolve(process.cwd());
+    markAgentInstalledForDirectory(updatedConfig, cwdKey, action.key, {
+      command: action.command,
+      package: action.package
+    });
+    saveConfig(updatedConfig);
+  } catch (error) {
+    console.error(chalk.yellow(`설정 업데이트 실패 (무시하고 계속 진행): ${error.message}`));
   }
 
   runAction(action);
