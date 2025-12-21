@@ -44,7 +44,7 @@
       "../docs/"
     ],
     "defaultMode": "acceptEdits",
-    "disableBypassPermissionsMode": false
+    "disableBypassPermissionsMode": "disable"
   },
   "sandbox": {
     "enabled": true,
