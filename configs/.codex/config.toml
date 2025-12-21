@@ -23,7 +23,6 @@ sandbox_mode = "danger-full-access"  # FULL system access; no sandbox restrictio
 
 # Sandbox Workspace Write (even in danger mode, set for completeness/network)
 [sandbox_workspace_write]
-writable_roots = ["/"]       # Theoretical full write access (danger mode overrides)
 network_access = true        # Full outbound network access
 exclude_tmpdir_env_var = false
 exclude_slash_tmp = false
