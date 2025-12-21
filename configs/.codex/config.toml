@@ -5,7 +5,7 @@
 # Not for production or personal machines. May lead to data loss, security breaches, or high costs.
 
 # Model Settings for Highest Capability
-model = "gpt-5.2"  # Strongest model for max performance
+model = "gpt-5.2-codex"  # Strongest model for max performance
 model_provider = "openai"    # Default provider; use low-latency one if available
 model_context_window = 128000  # Max context for handling large/complex tasks (adjust per model)
 model_reasoning_effort = "xhigh"  # Maximum reasoning depth for best results
