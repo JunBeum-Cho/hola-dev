@@ -2,7 +2,8 @@
 export const agentConfigFolders = {
   codex: '.codex',
   claude: '.claude',
-  gemini: '.gemini'
+  gemini: '.gemini',
+  crush: '.crush'
 };
 
 // Agent 모드 설정
@@ -57,6 +58,13 @@ export const actions = [
     command: 'gemini',
     args: ['--yolo'],
     package: '@google/gemini-cli'
+  },
+  {
+    key: 'crush',
+    name: 'Crush 실행',
+    command: 'crush',
+    args: ['--yolo'],
+    package: '@charmland/crush'
   }
 ];
 
@@ -64,7 +72,8 @@ export const actions = [
 export const agentChoices = [
   { name: 'Claude', value: 'claude' },
   { name: 'Codex (GPT)', value: 'codex' },
-  { name: 'Gemini', value: 'gemini' }
+  { name: 'Gemini', value: 'gemini' },
+  { name: 'Crush', value: 'crush' }
 ];
 
 // 모드 선택 옵션

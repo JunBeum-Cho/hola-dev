@@ -29,6 +29,9 @@ export const AGENT_PATHS = {
   },
   gemini: {
     dir: path.join(homeDir, '.gemini'),
+  },
+  crush: {
+    dir: path.join(homeDir, '.crush'),
   }
 };
 
